@@ -1,0 +1,28 @@
+# Bungeecord side configuration
+mysql:
+  server: 'localhost'
+  port: '3306'
+  database: 'onfline'
+  user: 'root'
+  password: 'password'
+
+alreadyPremium: '&b&l正版认证 &7>> &a你已经认证正版了~'
+requestKickMessage: |-
+  '&a&l请您以&c&l&n正版登录&a&l的方式重新登录服务器'
+  ''
+  '   &7(把本服务器当作一个正版服来连接)'
+  
+# Spigot side configuration
+PremiumTitle: '&a正版认证成功'
+PremiumMessage: '&b&l正版认证 &7>> &b恭喜您已经成功认证正版~'
+CrackedTitle: '&c正版认证失败'
+CrackedMessage: '&b&l正版认证 &7>> &c正版认证失败 &7(可能的原因: 您当前使用盗版登录启动游戏)'
+
+PremiumCommands:
+  - 'lp user %player% parent add online'
+  - 'luckyprefix update %player% prefix online'
+UnPremiumCommands:
+  - 'lp user %player% parent del online'
+  - 'luckyprefix player %player% prefix'
+
+
