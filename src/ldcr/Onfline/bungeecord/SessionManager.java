@@ -22,7 +22,7 @@ public class SessionManager {
 			disconnect();
 		}
 		OnflineBungeecord.log("&a正在连接Mysql数据库 "+mysqlServer+":"+mysqlPort+" ...");
-		conn = new MysqlConnection(mysqlServer, mysqlUser, mysqlPort, mysqlPassword, mysqlDatabase);
+		conn = new MysqlConnection(mysqlServer, mysqlPort, mysqlUser, mysqlPassword, mysqlDatabase);
 		if (conn.isConnection()) {
 			conn.createTable(USER_TABLE_NAME, "player", "premium", "uuid");
 		} else throw new SQLException("Failed connect Database");
@@ -92,7 +92,7 @@ public class SessionManager {
 						continue;
 					}
 					if ("true".equals(data.get("premium").toString())) {
-						BungeeChannelMessage.requestUnPremium(playerObj.toString());
+						BungeeChannelMessage.requestUnPremium(player.getServer(), playerObj.toString());
 						delSession(playerObj.toString());
 						OnflineBungeecord.log("&e正版玩家 "+player.getName()+" 已改名, 删除旧ID ["+playerObj.toString()+"] 的正版权限...");
 					}

@@ -108,12 +108,12 @@ public class OnflineBungeecord extends Plugin {
 		mysqlPassword = this.config.getString("mysql.password","password");
 
 		alreadyPremium = this.config.getString("alreadyPremium","&b&l正版认证 &7>> &a你已经认证正版了~").replace('&', '§').replace("§§", "&");
-		requestKickMessage = this.config.getString("requestKickMessage", "&b&l请您以&c&l&n正版登录&a&l的方式重新登录服务器\n\n   &7(把本服务器当作一个正版服来连接)").replace('&', '§').replace("§§", "&");
+		requestKickMessage = this.config.getString("requestKickMessage", "&a&l请您以&c&l&n正版登录&a&l的方式重新登录服务器\n\n   &7(把本服务器当作一个正版服来连接)").replace('&', '§').replace("§§", "&");
 		return true;
 	}
 	public static void log(final String... messages) {
 		for (final String message : messages) {
-			console.sendMessage(new TextComponent("§a§lOnfline §7>> "+message.replace('&', '§').replace("§§", "&")));
+			console.sendMessage(new TextComponent("§b§lOnfline §7>> "+message.replace('&', '§').replace("§§", "&")));
 		}
 	}
 }

@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
@@ -31,7 +30,7 @@ public class ConnectListener implements Listener {
 		if (OnflineBungeecord.getSession().isRequestingPremium(e.getConnection().getAddress().getAddress())) {
 			OnflineBungeecord.getSession().startCheckPremium(e.getConnection().getAddress().getAddress());
 			e.getConnection().setOnlineMode(true);
-			OnflineBungeecord.log("&e开始验证连接 "+e.getConnection().getAddress().getAddress().getHostAddress()+" 的正版身份");
+			//OnflineBungeecord.log("&e开始验证连接 "+e.getConnection().getAddress().getAddress().getHostAddress()+" 的正版身份");
 		}
 	}
 	@EventHandler
@@ -39,15 +38,16 @@ public class ConnectListener implements Listener {
 		if (!OnflineBungeecord.works) return;
 		if (e.getConnection().isOnlineMode()) {
 			final InitialHandler initialHandler = (InitialHandler) e.getConnection();
-			final String username = initialHandler.getLoginRequest().getData();
+			final String player = initialHandler.getLoginRequest().getData();
 			OnflineBungeecord.getSession().updateUUID(initialHandler);
 			try {
-				final UUID offlineUUID = generateOfflineId(username);
+				final UUID offlineUUID = generateOfflineId(player);
 				final Field idField = InitialHandler.class.getDeclaredField("uniqueId");
 				idField.setAccessible(true);
 				idField.set(e.getConnection(), offlineUUID);
 			} catch (final Exception ex) {
-				OnflineBungeecord.instance.getLogger().log(Level.SEVERE, "Failed to set offline uuid of " + username, ex);
+				ex.printStackTrace();
+				OnflineBungeecord.log("&c更新正版玩家 "+player+" 的UUID失败");
 			}
 		}
 	}

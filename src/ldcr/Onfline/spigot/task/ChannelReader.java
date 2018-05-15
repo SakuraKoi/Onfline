@@ -28,8 +28,6 @@ public class ChannelReader implements Runnable {
 			Bukkit.getScheduler().runTaskLater(OnflineSpigot.instance, new PremiumUpdater(p,isPremium), 40);
 		} else if ("requestUnPremium".equals(subchannel)) {
 			final String player = in.readUTF();
-			final long time = in.readLong();
-			if ((System.currentTimeMillis()-time) > 1000) return;
 			Bukkit.getScheduler().runTask(OnflineSpigot.instance, new CommandCaller(player, OnflineSpigot.instance.unPremiumCommands));
 		}
 	}

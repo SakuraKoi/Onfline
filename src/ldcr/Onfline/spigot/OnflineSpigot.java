@@ -57,7 +57,7 @@ public class OnflineSpigot extends JavaPlugin {
 	}
 	public static void log(final String... messages) {
 		for (final String message : messages) {
-			console.sendMessage("§a§lOnfline §7>> "+message.replace('&', '§').replace("§§", "&"));
+			console.sendMessage("§b§lOnfline §7>> "+message.replace('&', '§').replace("§§", "&"));
 		}
 	}
 }
