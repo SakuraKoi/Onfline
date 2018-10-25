@@ -17,14 +17,14 @@ public class PremiumUpdater implements Runnable {
 	@Override
 	public void run() {
 		if (isPremium) {
-			TitleUtils.sendTitle(player, OnflineSpigot.instance.premiumTitle, "", 10, 100, 10);
-			player.sendMessage(OnflineSpigot.instance.premiumMessage);
-			Bukkit.getScheduler().runTask(OnflineSpigot.instance, new CommandCaller(player.getName(), OnflineSpigot.instance.permiumCommands));
+			TitleUtils.sendTitle(player, OnflineSpigot.getInstance().getMessagePremiumTitle(), "", 10, 100, 10);
+			player.sendMessage(OnflineSpigot.getInstance().getMessagePremiumMessage());
+			Bukkit.getScheduler().runTask(OnflineSpigot.getInstance(), new CommandCaller(player.getName(), OnflineSpigot.getInstance().getCommandsPermium()));
 		} else {
-			TitleUtils.sendTitle(player, OnflineSpigot.instance.crackedTitle, "", 10, 100, 10);
-			player.sendMessage(OnflineSpigot.instance.crackedMessage);
+			TitleUtils.sendTitle(player, OnflineSpigot.getInstance().getMessageCrackedTitle(), "", 10, 100, 10);
+			player.sendMessage(OnflineSpigot.getInstance().getMessageCrackedMessage());
 		}
-		OnflineSpigot.instance.messageChannel.replyUpdated(player);
+		OnflineSpigot.getInstance().getMessageChannel().replyUpdated(player);
 		OnflineSpigot.log("&a已向玩家 "+player.getName()+" 发送正版验证回执, 回传信息ing...");
 	}
 

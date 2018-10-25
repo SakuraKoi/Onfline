@@ -1,4 +1,7 @@
-# Bungeecord side configuration
+# Onfline 正版验证 By.Ldcr
+# ------------------------
+
+# Bungeecord侧配置文件
 mysql:
   server: 'localhost'
   port: '3306'
@@ -12,7 +15,7 @@ requestKickMessage: |-
   ''
   '   &7(把本服务器当作一个正版服来连接)'
   
-# Spigot side configuration
+# Spigot侧配置文件
 PremiumTitle: '&a正版认证成功'
 PremiumMessage: '&b&l正版认证 &7>> &b恭喜您已经成功认证正版~'
 CrackedTitle: '&c正版认证失败'

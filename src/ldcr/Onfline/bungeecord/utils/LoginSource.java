@@ -1,4 +1,4 @@
-package ldcr.Onfline.bungeecord;
+package ldcr.Onfline.bungeecord.utils;
 
 import java.util.UUID;
 

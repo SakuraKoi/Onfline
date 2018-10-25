@@ -1,4 +1,4 @@
-package ldcr.Onfline.bungeecord;
+package ldcr.Onfline.bungeecord.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,15 +8,40 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import ldcr.Onfline.bungeecord.OnflineBungeecord;
 
 public class MysqlConnection {
+	private final class DatabaseCheckThread extends Thread {
+		private boolean run = true;
+		
+		private DatabaseCheckThread() {
+			super("Onfline-Database");
+		}
+		private void cancel() {
+			run = false;
+		}
+		@Override
+		public void run() {
+			while(run) {
+				try {
+					Thread.sleep(10000);
+					if (connection != null) {
+						isExists("Onfline");
+					}
+				} catch (final Exception ignored) {}
+			}
+		}
+	}
+
 	private String address;
 	private String port;
 	private String user;
 	private String password;
 	private String database;
 	private Connection connection;
-	private Thread recheckThread;
+	private DatabaseCheckThread recheckThread;
 
 	public MysqlConnection(final String address, final String port, final String user, final String password, final String database) {
 		if (!loadDriverMySQL()) {
@@ -29,25 +54,9 @@ public class MysqlConnection {
 		this.user = user == null ? "root" : user;
 		this.password = password == null ? "password" : password;
 		this.database = database == null ? "onfline" : database;
-
 		connect();
-
-		recheckThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while(true) {
-					try {
-						Thread.sleep(10000);
-						if (connection == null) {
-							continue;
-						} else {
-							isExists("Onfline");
-						}
-					} catch (final Exception e) {}
-				}
-			}
-		}, "Onfline-Database");
-
+		
+		recheckThread = new DatabaseCheckThread();
 		if (isConnection()) {
 			recheckThread.setDaemon(true);
 			recheckThread.start();
@@ -57,7 +66,7 @@ public class MysqlConnection {
 
 	public boolean isConnection() {
 		try {
-			if ((connection == null) || connection.isClosed())
+			if (connection == null || connection.isClosed())
 				return false;
 		} catch (final SQLException e) {
 			return false;
@@ -70,12 +79,14 @@ public class MysqlConnection {
 		if (connection!=null) {
 			try {
 				connection.close();
-			} catch (final Exception e) {}
+			} catch (final Exception ignored) {}
+			connection = null;
 		}
 		if (recheckThread!=null) {
 			try {
-				recheckThread.stop();
-			} catch (final Exception e) {}
+				recheckThread.cancel();
+			} catch (final Exception ignored) {}
+			recheckThread = null;
 		}
 	}
 
@@ -92,11 +103,7 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return false;
 	}
@@ -116,11 +123,7 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return false;
 	}
@@ -145,11 +148,7 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return false;
 	}
@@ -181,16 +180,8 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (final Exception e) {}
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (resultSet != null) { resultSet.close(); }} catch (final Exception ignored) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return false;
 	}
@@ -210,16 +201,8 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (final Exception e) {}
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (resultSet != null) { resultSet.close(); }} catch (final Exception ignored) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return false;
 	}
@@ -239,16 +222,8 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (final Exception e) {}
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (resultSet != null) { resultSet.close(); } } catch (final Exception ignored) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return null;
 	}
@@ -268,21 +243,13 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (final Exception e) {}
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (resultSet != null) { resultSet.close(); } } catch (final Exception ignored) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return null;
 	}
 
-	public HashMap<String, Object> getValueLast(final String name, final String column, final Object columnValue, final String... valueColumn) {
+	public Map<String, Object> getValueLast(final String name, final String column, final Object columnValue, final String... valueColumn) {
 		final HashMap<String, Object> map = new HashMap<>();
 		PreparedStatement pstmt = null;
 		ResultSet resultSet = null;
@@ -302,21 +269,13 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (final Exception e) {}
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (resultSet != null) { resultSet.close(); } } catch (final Exception ignored) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return map;
 	}
 
-	public HashMap<String, Object> getValue(final String name, final String column, final Object columnValue, final String... valueColumn) {
+	public Map<String, Object> getValue(final String name, final String column, final Object columnValue, final String... valueColumn) {
 		final HashMap<String, Object> map = new HashMap<>();
 		PreparedStatement pstmt = null;
 		ResultSet resultSet = null;
@@ -336,21 +295,13 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (final Exception e) {}
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (resultSet != null) { resultSet.close(); } } catch (final Exception ignored) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return map;
 	}
 
-	public LinkedList<HashMap<String,Object>> getValues(final String name, final String column, final Object columnValue, final String... valueColumn) {
+	public List<HashMap<String,Object>> getValues(final String name, final String column, final Object columnValue, final String... valueColumn) {
 		final LinkedList<HashMap<String,Object>> list = new LinkedList<>();
 		PreparedStatement pstmt = null;
 		ResultSet resultSet = null;
@@ -371,16 +322,8 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (final Exception e) {}
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (resultSet != null) { resultSet.close(); } } catch (final Exception ignored) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return list;
 	}
@@ -411,21 +354,13 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (final Exception e) {}
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (resultSet != null) { resultSet.close(); } } catch (final Exception ignored) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return list;
 	}
 
-	public LinkedList<HashMap<String, Object>> getValues(final String name, final String sortColumn, final int size, final String... valueColumn) {
+	public List<HashMap<String, Object>> getValues(final String name, final String sortColumn, final int size, final String... valueColumn) {
 		return getValues(name, sortColumn, size, false, valueColumn);
 	}
 
@@ -444,7 +379,7 @@ public class MysqlConnection {
 	 *            获取数据列
 	 * @return {@link LinkedList}
 	 */
-	public LinkedList<HashMap<String, Object>> getValues(final String name, final String sortColumn, final int size, final boolean desc, final String... valueColumn) {
+	public List<HashMap<String, Object>> getValues(final String name, final String sortColumn, final int size, final boolean desc, final String... valueColumn) {
 		final LinkedList<HashMap<String, Object>> list = new LinkedList<>();
 		PreparedStatement pstmt = null;
 		ResultSet resultSet = null;
@@ -469,16 +404,8 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (final Exception e) {}
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (resultSet != null) { resultSet.close(); } } catch (final Exception ignored) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return list;
 	}
@@ -498,7 +425,7 @@ public class MysqlConnection {
 	 *            获取数据列
 	 * @return {@link LinkedList}
 	 */
-	public LinkedList<HashMap<String, Object>> getValues(final String name, final int size, final String... valueColumn) {
+	public List<HashMap<String, Object>> getValues(final String name, final int size, final String... valueColumn) {
 		final LinkedList<HashMap<String, Object>> list = new LinkedList<>();
 		PreparedStatement pstmt = null;
 		ResultSet resultSet = null;
@@ -518,16 +445,8 @@ public class MysqlConnection {
 				connect();
 			}
 		} finally {
-			try {
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} catch (final Exception e) {}
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (resultSet != null) { resultSet.close(); } } catch (final Exception ignored) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 		return list;
 	}
@@ -546,11 +465,7 @@ public class MysqlConnection {
 			}
 			return false;
 		} finally {
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (final Exception e) {}
+			try { if (pstmt != null) { pstmt.close(); } } catch (final Exception ignored) {}
 		}
 	}
 

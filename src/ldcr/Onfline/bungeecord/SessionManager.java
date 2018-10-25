@@ -4,19 +4,23 @@ import java.net.InetAddress;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
+import ldcr.Onfline.bungeecord.utils.LoginSource;
+import ldcr.Onfline.bungeecord.utils.MysqlConnection;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 
 public class SessionManager {
+	private static final String USER_TABLE_NAME = "Onfline_user";
+	
 	private MysqlConnection conn = null;
-	private final HashMap<String, LoginSource> premiumMap = new HashMap<String, LoginSource>();
-	private final HashSet<InetAddress> requestCheck = new HashSet<InetAddress>();
-	private final HashSet<InetAddress> waitingCheck = new HashSet<InetAddress>();
-	private final HashMap<ProxiedPlayer, Boolean> waitingPremium = new HashMap<ProxiedPlayer, Boolean>();
-	private final String USER_TABLE_NAME = "Onfline_user";
+	private final HashMap<String, LoginSource> premiumMap = new HashMap<>();
+	private final HashSet<InetAddress> requestCheck = new HashSet<>();
+	private final HashSet<InetAddress> waitingCheck = new HashSet<>();
+	private final HashMap<ProxiedPlayer, Boolean> waitingPremium = new HashMap<>();
 	public SessionManager(final String mysqlServer, final String mysqlPort, final String mysqlDatabase, final String mysqlUser, final String mysqlPassword) throws SQLException {
 		if (conn!=null) {
 			disconnect();
@@ -28,35 +32,31 @@ public class SessionManager {
 		} else throw new SQLException("Failed connect Database");
 	}
 	public void disconnect() {
-		if (conn!=null) {
-			if (conn.isConnection()) {
+		if (conn!=null && conn.isConnection()) {
 				OnflineBungeecord.log("&e正在关闭数据库连接...");
 				conn.closeConnection();
 				OnflineBungeecord.log("&a已与数据库断线.");
-			}
 		}
 	}
 	public void requestCheckPremium(final ProxiedPlayer player) {
 		final LoginSource session = getSession(player);
 		if (session.isPermium()) {
-			player.sendMessage(new TextComponent(OnflineBungeecord.instance.alreadyPremium));
+			player.sendMessage(new TextComponent(OnflineBungeecord.getInstance().getMessageAlreadyPremium()));
 			return;
 		}
 		OnflineBungeecord.log("&d玩家 "+player.getName()+" 请求认证正版");
 		requestCheck.add(player.getAddress().getAddress());
-		player.disconnect(new TextComponent(OnflineBungeecord.instance.requestKickMessage));
+		player.disconnect(new TextComponent(OnflineBungeecord.getInstance().getMessageRequestKick()));
 	}
 	public boolean isRequestingPremium(final InetAddress address) {
-		if (requestCheck.contains(address)) return true;
-		return false;
+		return requestCheck.contains(address);
 	}
 	public void startCheckPremium(final InetAddress address) {
 		requestCheck.remove(address);
 		waitingCheck.add(address);
 	}
 	public boolean isCheckingPremium(final ProxiedPlayer player) {
-		if (waitingCheck.contains(player.getAddress().getAddress())) return true;
-		return false;
+		return waitingCheck.contains(player.getAddress().getAddress());
 	}
 	public void failedCheckPremium(final ProxiedPlayer player) {
 		waitingCheck.remove(player.getAddress().getAddress());
@@ -81,18 +81,15 @@ public class SessionManager {
 		waitingPremium.remove(player);
 		if (isSuccess) {
 			final LoginSource session = premiumMap.get(player.getName().toLowerCase());
-			final LinkedList<HashMap<String,Object>> datas = conn.getValues(USER_TABLE_NAME, "uuid", session.getUuid().toString(), "player", "premium");
+			final List<HashMap<String,Object>> datas = conn.getValues(USER_TABLE_NAME, "uuid", session.getUuid().toString(), "player", "premium");
 			if (datas.size()>1) {
 				for (final HashMap<String,Object> data : datas) {
 					final Object playerObj = data.get("player");
-					if (playerObj==null) {
-						continue;
-					}
-					if (player.getName().toLowerCase().equals(playerObj.toString())) {
+					if (playerObj==null || player.getName().equalsIgnoreCase(playerObj.toString())) {
 						continue;
 					}
 					if ("true".equals(data.get("premium").toString())) {
-						BungeeChannelMessage.requestUnPremium(player.getServer(), playerObj.toString());
+						ChannelMessager.requestUnPremium(player.getServer(), playerObj.toString());
 						delSession(playerObj.toString());
 						OnflineBungeecord.log("&e正版玩家 "+player.getName()+" 已改名, 删除旧ID ["+playerObj.toString()+"] 的正版权限...");
 					}
@@ -177,7 +174,7 @@ public class SessionManager {
 	}
 	private LoginSource loadSession(final String username) {
 		if (conn.isExists(USER_TABLE_NAME, "player", username)) {
-			final HashMap<String,Object> result = conn.getValue(USER_TABLE_NAME, "player", username, "premium", "uuid");
+			final Map<String,Object> result = conn.getValue(USER_TABLE_NAME, "player", username, "premium", "uuid");
 			return new LoginSource(username, result.get("premium").toString().equals("true"), result.get("uuid").toString());
 		}
 		return null;

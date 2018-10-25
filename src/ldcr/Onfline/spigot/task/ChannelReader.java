@@ -21,14 +21,15 @@ public class ChannelReader implements Runnable {
 		if ("requestPremium".equals(subchannel)) {
 			final String player = in.readUTF();
 			final boolean isPremium = in.readBoolean();
+			@SuppressWarnings("deprecation")
 			final OfflinePlayer offp = Bukkit.getOfflinePlayer(player);
 			if (offp==null) return;
 			if (!offp.isOnline()) return;
 			final Player p = offp.getPlayer();
-			Bukkit.getScheduler().runTaskLater(OnflineSpigot.instance, new PremiumUpdater(p,isPremium), 40);
+			Bukkit.getScheduler().runTaskLater(OnflineSpigot.getInstance(), new PremiumUpdater(p,isPremium), 40);
 		} else if ("requestUnPremium".equals(subchannel)) {
 			final String player = in.readUTF();
-			Bukkit.getScheduler().runTask(OnflineSpigot.instance, new CommandCaller(player, OnflineSpigot.instance.unPremiumCommands));
+			Bukkit.getScheduler().runTask(OnflineSpigot.getInstance(), new CommandCaller(player, OnflineSpigot.getInstance().getCommandsUnPremium()));
 		}
 	}
 }

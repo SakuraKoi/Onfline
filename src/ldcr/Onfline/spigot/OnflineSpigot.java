@@ -12,16 +12,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class OnflineSpigot extends JavaPlugin {
-	public static OnflineSpigot instance;
-	public SpigotChannelMessage messageChannel;
+import lombok.Getter;
 
-	public String premiumTitle;
-	public String premiumMessage;
-	public String crackedTitle;
-	public String crackedMessage;
-	public List<String> permiumCommands;
-	public List<String> unPremiumCommands;
+public class OnflineSpigot extends JavaPlugin {
+	@Getter private static OnflineSpigot instance;
+	@Getter private SpigotChannelMessage messageChannel;
+
+	@Getter private String messagePremiumTitle;
+	@Getter private String messagePremiumMessage;
+	@Getter private String messageCrackedTitle;
+	@Getter private String messageCrackedMessage;
+	@Getter private List<String> commandsPermium;
+	@Getter private List<String> commandsUnPremium;
 
 	private static CommandSender console;
 	@Override
@@ -48,12 +50,12 @@ public class OnflineSpigot extends JavaPlugin {
 			e.printStackTrace();
 			return;
 		}
-		premiumTitle = config.getString("PremiumTitle", "&a正版认证成功").replace('&', '§').replace("§§", "&");
-		premiumMessage = config.getString("PremiumMessage", "&b&l正版认证 &7>> &b恭喜您已经成功认证正版~").replace('&', '§').replace("§§", "&");
-		crackedTitle = config.getString("CrackedTitle", "&c正版认证失败").replace('&', '§').replace("§§", "&");
-		crackedMessage = config.getString("CrackedMessage", "&b&l正版认证 &7>> &c正版认证失败 &7(可能的原因: 您当前使用盗版登录启动游戏)").replace('&', '§').replace("§§", "&");
-		permiumCommands = config.getStringList("PremiumCommands");
-		unPremiumCommands = config.getStringList("UnPremiumCommands");
+		messagePremiumTitle = config.getString("PremiumTitle", "&a正版认证成功").replace('&', '§').replace("§§", "&");
+		messagePremiumMessage = config.getString("PremiumMessage", "&b&l正版认证 &7>> &b恭喜您已经成功认证正版~").replace('&', '§').replace("§§", "&");
+		messageCrackedTitle = config.getString("CrackedTitle", "&c正版认证失败").replace('&', '§').replace("§§", "&");
+		messageCrackedMessage = config.getString("CrackedMessage", "&b&l正版认证 &7>> &c正版认证失败 &7(可能的原因: 您当前使用盗版登录启动游戏)").replace('&', '§').replace("§§", "&");
+		commandsPermium = config.getStringList("PremiumCommands");
+		commandsUnPremium = config.getStringList("UnPremiumCommands");
 	}
 	public static void log(final String... messages) {
 		for (final String message : messages) {

@@ -8,7 +8,7 @@ import ldcr.Utils.Bukkit.command.CommandHandler;
 public class SpigotOnflineCommand extends CommandHandler {
 
 	public SpigotOnflineCommand() {
-		super(OnflineSpigot.instance, "§a§lOnfline");
+		super(OnflineSpigot.getInstance(), "§a§lOnfline");
 	}
 
 	@Override
@@ -18,7 +18,7 @@ public class SpigotOnflineCommand extends CommandHandler {
 			return;
 		}
 		if (checkPermission(sender, "onfline.use")) return;
-		OnflineSpigot.instance.messageChannel.requestAuth((Player) sender);
+		OnflineSpigot.getInstance().getMessageChannel().requestAuth((Player) sender);
 		OnflineSpigot.log("&e玩家 "+sender.getName()+" 请求进行正版验证");
 	}
 

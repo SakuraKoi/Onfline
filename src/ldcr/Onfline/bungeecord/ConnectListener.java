@@ -25,21 +25,20 @@ import net.md_5.bungee.event.EventHandler;
 public class ConnectListener implements Listener {
 	@EventHandler
 	public void onPreLogin(final PreLoginEvent e) {
-		if (!OnflineBungeecord.works) return;
+		if (!OnflineBungeecord.isOnflineWorking()) return;
 		if (e.isCancelled()) return;
-		if (OnflineBungeecord.getSession().isRequestingPremium(e.getConnection().getAddress().getAddress())) {
-			OnflineBungeecord.getSession().startCheckPremium(e.getConnection().getAddress().getAddress());
+		if (OnflineBungeecord.getSessionManager().isRequestingPremium(e.getConnection().getAddress().getAddress())) {
+			OnflineBungeecord.getSessionManager().startCheckPremium(e.getConnection().getAddress().getAddress());
 			e.getConnection().setOnlineMode(true);
-			//OnflineBungeecord.log("&e开始验证连接 "+e.getConnection().getAddress().getAddress().getHostAddress()+" 的正版身份");
 		}
 	}
 	@EventHandler
 	public void onLogin(final LoginEvent e) {
-		if (!OnflineBungeecord.works) return;
+		if (!OnflineBungeecord.isOnflineWorking()) return;
 		if (e.getConnection().isOnlineMode()) {
 			final InitialHandler initialHandler = (InitialHandler) e.getConnection();
 			final String player = initialHandler.getLoginRequest().getData();
-			OnflineBungeecord.getSession().updateUUID(initialHandler);
+			OnflineBungeecord.getSessionManager().updateUUID(initialHandler);
 			try {
 				final UUID offlineUUID = generateOfflineId(player);
 				final Field idField = InitialHandler.class.getDeclaredField("uniqueId");
@@ -56,54 +55,49 @@ public class ConnectListener implements Listener {
 	}
 	@EventHandler
 	public void afterLogin(final PostLoginEvent e) {
-		if (!OnflineBungeecord.works) return;
-		if (OnflineBungeecord.getSession().isCheckingPremium(e.getPlayer())) {
+		if (!OnflineBungeecord.isOnflineWorking()) return;
+		if (OnflineBungeecord.getSessionManager().isCheckingPremium(e.getPlayer())) {
 			new CheckPremiumTask(e);
 		}
 	}
 	@EventHandler
 	public void onQuit(final PlayerDisconnectEvent e) {
-		if (!OnflineBungeecord.works) return;
-		if (OnflineBungeecord.getSession().isUpdatingPremium(e.getPlayer())) {
-			OnflineBungeecord.getSession().cancelUpdatePremium(e.getPlayer());
+		if (!OnflineBungeecord.isOnflineWorking()) return;
+		if (OnflineBungeecord.getSessionManager().isUpdatingPremium(e.getPlayer())) {
+			OnflineBungeecord.getSessionManager().cancelUpdatePremium(e.getPlayer());
 		}
 	}
 
 	@EventHandler
 	public void onServerConnected(final ServerConnectedEvent event) {
-		if (!OnflineBungeecord.works) return;
+		if (!OnflineBungeecord.isOnflineWorking()) return;
 		final ProxiedPlayer player = event.getPlayer();
-		if (OnflineBungeecord.getSession().isUpdatingPremium(player)) {
-			BungeeChannelMessage.requestPremium(player, event.getServer(), OnflineBungeecord.getSession().getUpdatingPremiumState(player));
+		if (OnflineBungeecord.getSessionManager().isUpdatingPremium(player)) {
+			ChannelMessager.requestPremium(player, event.getServer(), OnflineBungeecord.getSessionManager().getUpdatingPremiumState(player));
 		}
 	}
 
 	@EventHandler
 	public void onPluginMessage(final PluginMessageEvent pluginMessageEvent) {
-		if (!OnflineBungeecord.works) return;
+		if (!OnflineBungeecord.isOnflineWorking()) return;
 		final String channel = pluginMessageEvent.getTag();
 		if (pluginMessageEvent.isCancelled() || !"OnflineBungeecord".equals(channel)) return;
 		pluginMessageEvent.setCancelled(true);
 		if (!(pluginMessageEvent.getSender() instanceof Server)) return;
-
+		
 		final byte[] data = Arrays.copyOf(pluginMessageEvent.getData(), pluginMessageEvent.getData().length);
+	
 		final ProxiedPlayer forPlayer = (ProxiedPlayer) pluginMessageEvent.getReceiver();
-
-		ProxyServer.getInstance().getScheduler().runAsync(OnflineBungeecord.instance, new Runnable() {
-			@Override
-			public void run() {
-				readMessage(forPlayer, data);
-			}
-		});
+		ProxyServer.getInstance().getScheduler().runAsync(OnflineBungeecord.getInstance(), () -> readMessage(forPlayer, data));
 	}
 
 	private void readMessage(final ProxiedPlayer forPlayer, final byte[] data) {
 		final ByteArrayDataInput dataInput = ByteStreams.newDataInput(data);
 		final String subChannel = dataInput.readUTF();
 		if ("requestAuth".equals(subChannel)) {
-			OnflineBungeecord.getSession().requestCheckPremium(forPlayer);
+			OnflineBungeecord.getSessionManager().requestCheckPremium(forPlayer);
 		} else if ("finishPremium".equals(subChannel)) {
-			OnflineBungeecord.getSession().finishUpdatePremium(forPlayer);
+			OnflineBungeecord.getSessionManager().finishUpdatePremium(forPlayer);
 		}
 	}
 }

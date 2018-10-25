@@ -8,15 +8,15 @@ public class CheckPremiumTask implements Runnable {
 	private final PostLoginEvent e;
 	public CheckPremiumTask(final PostLoginEvent e) {
 		this.e = e;
-		ProxyServer.getInstance().getScheduler().runAsync(OnflineBungeecord.instance, this);
+		ProxyServer.getInstance().getScheduler().runAsync(OnflineBungeecord.getInstance(), this);
 	}
 
 	@Override
 	public void run() {
 		if (e.getPlayer().getPendingConnection().isOnlineMode()) {
-			OnflineBungeecord.getSession().passCheckPremium(e.getPlayer());
+			OnflineBungeecord.getSessionManager().passCheckPremium(e.getPlayer());
 		} else {
-			OnflineBungeecord.getSession().failedCheckPremium(e.getPlayer());
+			OnflineBungeecord.getSessionManager().failedCheckPremium(e.getPlayer());
 		}
 	}
 

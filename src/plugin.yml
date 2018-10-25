@@ -1,5 +1,5 @@
 name: Onfline-Spigot
-version: 1.0
+version: 2.0
 main: ldcr.Onfline.spigot.OnflineSpigot
 authors: [Ldcr]
 depend: [LdcrUtils]
