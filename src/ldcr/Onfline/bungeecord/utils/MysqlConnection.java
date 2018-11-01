@@ -15,7 +15,7 @@ import ldcr.Onfline.bungeecord.OnflineBungeecord;
 public class MysqlConnection {
 	private final class DatabaseCheckThread extends Thread {
 		private boolean run = true;
-		
+
 		private DatabaseCheckThread() {
 			super("Onfline-Database");
 		}
@@ -55,7 +55,7 @@ public class MysqlConnection {
 		this.password = password == null ? "password" : password;
 		this.database = database == null ? "onfline" : database;
 		connect();
-		
+
 		recheckThread = new DatabaseCheckThread();
 		if (isConnection()) {
 			recheckThread.setDaemon(true);
@@ -74,7 +74,6 @@ public class MysqlConnection {
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void closeConnection() {
 		if (connection!=null) {
 			try {

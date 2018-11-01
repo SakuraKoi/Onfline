@@ -97,7 +97,7 @@ public class OnflineBungeecord extends Plugin {
 		}
 		mysqlServer = config.getString("mysql.server","localhost");
 		mysqlPort = config.getString("mysql.port","3306");
-		mysqlDatabase = config.getString("mysql.database","luckyprefix");
+		mysqlDatabase = config.getString("mysql.database","onfline");
 		mysqlUser = config.getString("mysql.user","root");
 		mysqlPassword = config.getString("mysql.password","password");
 
