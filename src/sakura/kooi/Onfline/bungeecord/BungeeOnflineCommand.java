@@ -1,9 +1,11 @@
-package ldcr.Onfline.bungeecord;
+package sakura.kooi.Onfline.bungeecord;
 
-import ldcr.Onfline.bungeecord.utils.LoginSource;
+import java.sql.SQLException;
+
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
+import sakura.kooi.Onfline.bungeecord.utils.LoginSource;
 
 public class BungeeOnflineCommand extends Command {
 	public BungeeOnflineCommand() {
@@ -37,7 +39,15 @@ public class BungeeOnflineCommand extends Command {
 				return;
 			}
 			final String player = args[1].toLowerCase();
-			final LoginSource loginSource = OnflineBungeecord.getSessionManager().getLoginSource(player);
+			LoginSource loginSource;
+			try {
+				loginSource = OnflineBungeecord.getSessionManager().getLoginSource(player);
+			} catch (final SQLException e) {
+				e.printStackTrace();
+				OnflineBungeecord.log("&c发生数据库错误, 请检查日志");
+				sender.sendMessage(new TextComponent("§b§lOnfline §7>> §c发生数据库错误, 请检查后台日志"));
+				return;
+			}
 			if (loginSource == null) {
 				sender.sendMessage(new TextComponent("§b§lOnfline §7>> §c玩家 "+player+" 不是正版登录的"));
 				return;

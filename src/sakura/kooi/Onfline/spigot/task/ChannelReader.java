@@ -1,4 +1,4 @@
-package ldcr.Onfline.spigot.task;
+package sakura.kooi.Onfline.spigot.task;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
-import ldcr.Onfline.spigot.OnflineSpigot;
+import sakura.kooi.Onfline.spigot.OnflineSpigot;
 
 public class ChannelReader implements Runnable {
 	private final byte[] message;

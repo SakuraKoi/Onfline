@@ -1,10 +1,10 @@
-package ldcr.Onfline.spigot.task;
+package sakura.kooi.Onfline.spigot.task;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import ldcr.Onfline.spigot.OnflineSpigot;
-import ldcr.Utils.Bukkit.TitleUtils;
+import sakura.kooi.Onfline.spigot.OnflineSpigot;
+import sakura.kooi.Utils.Bukkit.TitleUtils;
 
 public class PremiumUpdater implements Runnable {
 	private final Player player;

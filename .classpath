@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Bungeecord"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SakuraUtils"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Spigot1.9.2"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/LdcrUtils"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

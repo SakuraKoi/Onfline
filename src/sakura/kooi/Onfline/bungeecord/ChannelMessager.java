@@ -1,4 +1,4 @@
-package ldcr.Onfline.bungeecord;
+package sakura.kooi.Onfline.bungeecord;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;

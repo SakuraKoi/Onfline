@@ -1,4 +1,4 @@
-package ldcr.Onfline.spigot;
+package sakura.kooi.Onfline.spigot;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -7,7 +7,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import ldcr.Onfline.spigot.task.ChannelReader;
+import sakura.kooi.Onfline.spigot.task.ChannelReader;
 
 public class SpigotChannelMessage implements PluginMessageListener {
 

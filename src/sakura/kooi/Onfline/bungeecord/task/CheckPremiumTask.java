@@ -1,8 +1,8 @@
-package ldcr.Onfline.bungeecord.task;
+package sakura.kooi.Onfline.bungeecord.task;
 
-import ldcr.Onfline.bungeecord.OnflineBungeecord;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import sakura.kooi.Onfline.bungeecord.OnflineBungeecord;
 
 public class CheckPremiumTask implements Runnable {
 	private final PostLoginEvent e;

@@ -1,8 +1,8 @@
 name: Onfline-Spigot
-version: 2.0
-main: ldcr.Onfline.spigot.OnflineSpigot
-authors: [Ldcr]
-depend: [LdcrUtils]
+version: 3.0
+main: sakura.kooi.Onfline.spigot.OnflineSpigot
+authors: [SakuraKooi]
+depend: [SakuraUtils]
 
 commands:
     onfline:

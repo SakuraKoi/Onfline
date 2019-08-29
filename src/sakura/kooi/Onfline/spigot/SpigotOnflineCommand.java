@@ -1,9 +1,9 @@
-package ldcr.Onfline.spigot;
+package sakura.kooi.Onfline.spigot;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ldcr.Utils.Bukkit.command.CommandHandler;
+import sakura.kooi.Utils.Bukkit.command.CommandHandler;
 
 public class SpigotOnflineCommand extends CommandHandler {
 

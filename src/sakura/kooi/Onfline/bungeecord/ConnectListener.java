@@ -1,14 +1,14 @@
-package ldcr.Onfline.bungeecord;
+package sakura.kooi.Onfline.bungeecord;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.UUID;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
-import ldcr.Onfline.bungeecord.task.CheckPremiumTask;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -21,6 +21,7 @@ import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
+import sakura.kooi.Onfline.bungeecord.task.CheckPremiumTask;
 
 public class ConnectListener implements Listener {
 	@EventHandler
@@ -38,7 +39,12 @@ public class ConnectListener implements Listener {
 		if (e.getConnection().isOnlineMode()) {
 			final InitialHandler initialHandler = (InitialHandler) e.getConnection();
 			final String player = initialHandler.getLoginRequest().getData();
-			OnflineBungeecord.getSessionManager().updateUUID(initialHandler);
+			try {
+				OnflineBungeecord.getSessionManager().updateUUID(initialHandler);
+			} catch (final SQLException e1) {
+				e1.printStackTrace();
+				OnflineBungeecord.log("&c更新正版玩家 "+player+" 的UUID失败");
+			}
 			try {
 				final UUID offlineUUID = generateOfflineId(player);
 				final Field idField = InitialHandler.class.getDeclaredField("uniqueId");
@@ -46,7 +52,7 @@ public class ConnectListener implements Listener {
 				idField.set(e.getConnection(), offlineUUID);
 			} catch (final Exception ex) {
 				ex.printStackTrace();
-				OnflineBungeecord.log("&c更新正版玩家 "+player+" 的UUID失败");
+				OnflineBungeecord.log("&c修改正版玩家 "+player+" 的UUID失败");
 			}
 		}
 	}
@@ -84,9 +90,9 @@ public class ConnectListener implements Listener {
 		if (pluginMessageEvent.isCancelled() || !"OnflineBungeecord".equals(channel)) return;
 		pluginMessageEvent.setCancelled(true);
 		if (!(pluginMessageEvent.getSender() instanceof Server)) return;
-		
+
 		final byte[] data = Arrays.copyOf(pluginMessageEvent.getData(), pluginMessageEvent.getData().length);
-	
+
 		final ProxiedPlayer forPlayer = (ProxiedPlayer) pluginMessageEvent.getReceiver();
 		ProxyServer.getInstance().getScheduler().runAsync(OnflineBungeecord.getInstance(), () -> readMessage(forPlayer, data));
 	}
